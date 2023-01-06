@@ -1,5 +1,6 @@
 from flask import * #importing flask (Install it using python -m pip install flask)
-
+import requests
+from Logic.CheckStatusCode.HttpStatusErrorCodeChecker import httpStatusErrorCodeChecker
 
 app = Flask(__name__) #initialising flask
 
@@ -9,14 +10,24 @@ app = Flask(__name__) #initialising flask
 def home():
     return render_template("home.html") #rendering our home.html contained within /templates
 
-@app.route("/account", methods=["POST", "GET"]) #defining the routes for the account() funtion
-def account():
-    usr = "<User Not Defined>" #Creating a variable usr
+@app.route("/result", methods=["POST", "GET"]) #defining the routes for the account() funtion
+def analyse():
+    url = "<API Endpoint Not Defined>" #Creating a variable url
+
     if (request.method == "POST"): #Checking if the method of request was post
-        usr = request.form["name"] #getting the name of the user from the form on home page
-        if not usr: #if name is not defined it is set to default string
-            usr = "<User Not Defined>"
-    return render_template("account.html",username=usr) #rendering our account.html contained within /templates
+        url = request.form["url"] #getting the name of the user from the form on home page
+
+        if not url: #if name is not defined it is set to default string
+            url = "<API Endpoint Not Defined>"
+
+        response = requests.get(url)
+        # print(response.status_code)
+
+        HttpStatusErrorCodeChecker_range_result, HttpStatusErrorCodeChecker_code_result = httpStatusErrorCodeChecker(response.status_code)
+        print(HttpStatusErrorCodeChecker_range_result)
+        print(HttpStatusErrorCodeChecker_code_result)
+
+    return render_template("result.html",url=url) #rendering our account.html contained within /templates
 
 
 

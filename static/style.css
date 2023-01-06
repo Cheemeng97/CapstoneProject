@@ -12,17 +12,17 @@ p {
 body {
     display: inline;
     font-family: verdana;
-    background-color: #2C2F33;
+    background-color: #ffffff;
 }
 
 :root {
-    color: #d5e0e7;
+    color: #070809;
 }
 
 .add-btn {
     height: 40px;
     width: 150px;
-    color: #FFFFFF;
+    color: #000000;
     background-color: #03d603;
     border: 1px solid #029902;
     border-radius: 5px;
