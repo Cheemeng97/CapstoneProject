@@ -20,12 +20,12 @@ def analyse():
         if not url: #if name is not defined it is set to default string
             url = "<API Endpoint Not Defined>"
 
-        response = requests.get(url)
+        #response = requests.get(url)
         # print(response.status_code)
 
-        HttpStatusErrorCodeChecker_range_result, HttpStatusErrorCodeChecker_code_result = httpStatusErrorCodeChecker(response.status_code)
-        print(HttpStatusErrorCodeChecker_range_result)
-        print(HttpStatusErrorCodeChecker_code_result)
+        #HttpStatusErrorCodeChecker_range_result, HttpStatusErrorCodeChecker_code_result = httpStatusErrorCodeChecker(response.status_code)
+        #print(HttpStatusErrorCodeChecker_range_result)
+        #print(HttpStatusErrorCodeChecker_code_result)
 
     return render_template("result.html",url=url) #rendering our account.html contained within /templates
 
