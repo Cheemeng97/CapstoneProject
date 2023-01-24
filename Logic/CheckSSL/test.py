@@ -64,31 +64,48 @@ def get_issuer(cert):
         return None
 
 
-def print_basic_info(hostinfo):
-    s = '''» {hostname} « … {peername}
-    \tcommonName: {commonname}
-    \tSAN: {SAN}
-    \tIssuer: {issuer}
-    \tValid From: {notbefore}
-    \tValid To:  {notafter}
-    '''.format(
-            hostname=hostinfo.hostname,
-            peername=hostinfo.peername,
-            commonname=get_common_name(hostinfo.cert),
-            SAN=get_alt_names(hostinfo.cert),
-            issuer=get_issuer(hostinfo.cert),
-            notbefore=hostinfo.cert.not_valid_before,
-            notafter=hostinfo.cert.not_valid_after
-    )
-    print(s)
+def analyseSSLCert(hostinfo):
+
+    issuer = get_issuer(hostinfo.cert)
+    validFrom = hostinfo.cert.not_valid_before
+    validTo = hostinfo.cert.not_valid_after
+
+    if issuer != None & validFrom != None & validTo != None:
+        print("SSL Certificate is valid")
+
+    if "DigiCert" | "GeoTrust" | "Thawte" | "RapidSSL" | "Symantec" | "VeriSign" | "Comodo" | "GoDaddy" | "GlobalSign" | "Entrust" | "StartCom" | "Trustwave" | "Buypass" | "Certum" | "IdenTrust" | "Let's Encrypt" in issuer:
+        print("SSL Certificate is issued by a trusted CA")
+    else:
+        print("SSL Certificate is not issued by a trusted CA")
+
+    # s = '''» {hostname} « … {peername}
+    # \tcommonName: {commonname}
+    # \tSAN: {SAN}
+    # \tIssuer: {issuer}
+    # \tValid From: {notbefore}
+    # \tValid To:  {notafter}
+    # '''.format(
+    #         hostname=hostinfo.hostname,
+    #         peername=hostinfo.peername,
+    #         commonname=get_common_name(hostinfo.cert),
+    #         SAN=get_alt_names(hostinfo.cert),
+    #         issuer=get_issuer(hostinfo.cert),
+    #         notbefore=hostinfo.cert.not_valid_before,
+    #         notafter=hostinfo.cert.not_valid_after
+    # )
+    # print(s)
 
 def check_it_out(hostname, port):
     hostinfo = get_certificate(hostname, port)
-    print_basic_info(hostinfo)
+    analyseSSLCert(hostinfo)
 
 
 import concurrent.futures
-if __name__ == '__main__':
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as e:
-        for hostinfo in e.map(lambda x: get_certificate(x[0], x[1]), HOSTS):
-            print_basic_info(hostinfo)
+# if __name__ == '__main__':
+
+def SSL_Checker(urlInput):
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=4) as e:
+        # for hostinfo in e.map(lambda x: get_certificate(x[0], x[1]), urlInput):
+
+    hostinfo = get_certificate(urlInput, 443)
+    analyseSSLCert(hostinfo)
