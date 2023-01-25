@@ -101,8 +101,9 @@ def analyseSSLCert(hostinfo):
     else:
         result_validTo = "Invalid"
 
-    
-
+    # calculate how many days left for valid to
+    print("Calculating how many days left for valid to")
+    result_daysLeft = validTo - datetime.now()
 
     #result
     data = {
@@ -114,7 +115,8 @@ def analyseSSLCert(hostinfo):
         "ValidFrom": str(validFrom),
         "result_ValidFrom": result_validFrom,
         "ValidTo": str(validTo),
-        "result_ValidTo": result_validTo
+        "result_ValidTo": result_validTo,
+        "result_DaysLeft": str(result_daysLeft.days)
     }
 
     #save to json
