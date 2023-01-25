@@ -11,10 +11,8 @@
 # print(HttpStatusErrorCodeChecker_code_result)
 
 
-from CheckSSL.test import SSL_Checker
+from CheckSSL.ssl_checker import SSL_Checker
 
 urlInput = "test-ev-rsa.ssl.com"
 
-SSL_Checker_result = SSL_Checker(urlInput)
-
-print(SSL_Checker_result)
+SSL_Checker(urlInput)

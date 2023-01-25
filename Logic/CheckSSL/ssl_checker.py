@@ -5,6 +5,7 @@ import idna
 
 from socket import socket
 from collections import namedtuple
+from datetime import datetime
 
 HostInfo = namedtuple(field_names='cert hostname peername', typename='HostInfo')
 
@@ -63,49 +64,68 @@ def get_issuer(cert):
     except x509.ExtensionNotFound:
         return None
 
-
 def analyseSSLCert(hostinfo):
+    print("Analyzing SSL Certificate for: " + hostinfo.hostname)
 
     issuer = get_issuer(hostinfo.cert)
     validFrom = hostinfo.cert.not_valid_before
     validTo = hostinfo.cert.not_valid_after
 
-    if issuer != None & validFrom != None & validTo != None:
-        print("SSL Certificate is valid")
+    # check null
+    print("Checking if SSL Certificate is null")
+    result_nullCheck = "Not found"
+    if issuer != None:
+        result_nullCheck = "SSL Certificate found"
 
-    if "DigiCert" | "GeoTrust" | "Thawte" | "RapidSSL" | "Symantec" | "VeriSign" | "Comodo" | "GoDaddy" | "GlobalSign" | "Entrust" | "StartCom" | "Trustwave" | "Buypass" | "Certum" | "IdenTrust" | "Let's Encrypt" in issuer:
-        print("SSL Certificate is issued by a trusted CA")
+    # check trusted issuer
+    print("Checking if SSL Certificate is trusted")
+    result_trustIssuer = "Not Trusted"
+    if "DigiCert" or "GeoTrust" or "Thawte" or "RapidSSL" or "Symantec" or "VeriSign" or "Comodo" or "GoDaddy" or "GlobalSign" or "Entrust" or "StartCom" or "Trustwave" or "Buypass" or "Certum" or "IdenTrust" or "Let's Encrypt" in issuer:
+        result_trustIssuer = "Trusted"
     else:
-        print("SSL Certificate is not issued by a trusted CA")
+        result_trustIssuer = "Not Trusted"
 
-    # s = '''» {hostname} « … {peername}
-    # \tcommonName: {commonname}
-    # \tSAN: {SAN}
-    # \tIssuer: {issuer}
-    # \tValid From: {notbefore}
-    # \tValid To:  {notafter}
-    # '''.format(
-    #         hostname=hostinfo.hostname,
-    #         peername=hostinfo.peername,
-    #         commonname=get_common_name(hostinfo.cert),
-    #         SAN=get_alt_names(hostinfo.cert),
-    #         issuer=get_issuer(hostinfo.cert),
-    #         notbefore=hostinfo.cert.not_valid_before,
-    #         notafter=hostinfo.cert.not_valid_after
-    # )
-    # print(s)
+    # check valid from
+    print("Checking if SSL certificate valid from")
+    result_validFrom = "Invalid"
+    if validFrom < datetime.now():
+        result_validFrom = "Valid"
+    else:
+        result_validFrom = "Invalid"
+
+    # check valid to
+    print("Checking if SSL certificate valid to")
+    result_validTo = "Invalid"
+    if validTo > datetime.now():
+        result_validTo = "Valid"
+    else:
+        result_validTo = "Invalid"
+
+    
+
+
+    #result
+    data = {
+        "result_NullCheck": result_nullCheck,
+        "CommonName": get_common_name(hostinfo.cert),
+        "SAN": get_alt_names(hostinfo.cert),
+        "Issuer": issuer,
+        "result_TrustIssuer": result_trustIssuer,
+        "ValidFrom": str(validFrom),
+        "result_ValidFrom": result_validFrom,
+        "ValidTo": str(validTo),
+        "result_ValidTo": result_validTo
+    }
+
+    #save to json
+    import json
+    with open('./Results/ssl_result.json', 'w') as outfile:
+        json.dump(data, outfile)
 
 def check_it_out(hostname, port):
     hostinfo = get_certificate(hostname, port)
     analyseSSLCert(hostinfo)
 
-
-import concurrent.futures
-# if __name__ == '__main__':
-
 def SSL_Checker(urlInput):
-    # with concurrent.futures.ThreadPoolExecutor(max_workers=4) as e:
-        # for hostinfo in e.map(lambda x: get_certificate(x[0], x[1]), urlInput):
-
     hostinfo = get_certificate(urlInput, 443)
     analyseSSLCert(hostinfo)
