@@ -75,7 +75,7 @@ def analyseSSLCert(hostinfo):
     print("Checking if SSL Certificate is null")
     result_nullCheck = "Not found"
     if issuer != None:
-        result_nullCheck = "SSL Certificate found"
+        result_nullCheck = "TLS/SSL Certificate found"
 
     # check trusted issuer
     print("Checking if SSL Certificate is trusted")
@@ -106,7 +106,7 @@ def analyseSSLCert(hostinfo):
     result_daysLeft = validTo - datetime.now()
 
     #result
-    data = {
+    results = {
         "result_NullCheck": result_nullCheck,
         "CommonName": get_common_name(hostinfo.cert),
         "SAN": get_alt_names(hostinfo.cert),
@@ -119,10 +119,12 @@ def analyseSSLCert(hostinfo):
         "result_DaysLeft": str(result_daysLeft.days)
     }
 
-    #save to json
-    import json
-    with open('./Results/ssl_result.json', 'w') as outfile:
-        json.dump(data, outfile)
+    return results
+
+    # #save to json
+    # import json
+    # with open('./Results/ssl_result.json', 'w') as outfile:
+    #     json.dump(data, outfile)
 
 def check_it_out(hostname, port):
     hostinfo = get_certificate(hostname, port)
@@ -130,4 +132,5 @@ def check_it_out(hostname, port):
 
 def SSL_Checker(urlInput):
     hostinfo = get_certificate(urlInput, 443)
-    analyseSSLCert(hostinfo)
+    results = analyseSSLCert(hostinfo)
+    return results

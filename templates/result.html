@@ -1,27 +1,51 @@
 {% extends "template.html" %} {% block body %}
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #000000;
+  text-align: left;
+  padding: 8px;
+}
+
+/* tr:nth-child(even) {
+  background-color: #dddddd;
+} */
+</style>
+
 <h2>Analysis Result</h2>
-<p>Below are the result</p>
+<p>Below are the result for {{ url }}</p>
+
+<h3>TLS/SSL Certificate</h3>
+
+<p>{{ sslChecker_results.result_NullCheck }}</p>
 
 <table>
-    <tr>
-      <th>Category</th>
-      <th>Description</th>
-      <th>Status</th>
-    </tr>
-    <tr>
-      <td>Alfreds Futterkiste</td>
-      <td>Maria Anders</td>
-      <td>Germany</td>
-    </tr>
-    <tr>
-      <td>Centro comercial Moctezuma</td>
-      <td>Francisco Chang</td>
-      <td>Mexico</td>
-    </tr>
-    <tr>
-      <td>Ernst Handel</td>
-      <td>Roland Mendel</td>
-      <td>Austria</td>
-    </tr>
-  </table>
+  <tr>
+    <td>Common Name</td>
+    <td>{{ sslChecker_results.CommonName }}</td>
+    #if not null show green tick
+    <script>
+    if (sslCheck_result.CommonName = "*.google.com")
+    {<td><span style="color:green;width: 30px;">&#10003;</span></td>} 
+    else 
+    {<span style="color:red">&#10007;</span>}
+    </script>
+    
+  </tr>
+  <tr>
+    <td>SAN</td>
+    <td>{{ sslChecker_results.SAN }}</td>
+    <td>Germany</td>
+  </tr>
+</table>
+
+<!-- <p>Common Name: {{ sslChecker_results.CommonName }}</p>
+<p>SAN: {{ sslChecker_results.SAN }}</p> -->
+<p></p>
+<span style="color:green;width: 30px;">&#10003;</span> <span style="color:red">&#10007;</span> <span style="color:orange">&#33;</span>
 {% endblock %}
