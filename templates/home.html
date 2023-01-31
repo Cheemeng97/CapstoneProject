@@ -1,14 +1,20 @@
 {% extends "template.html" %} {% block body %}
 
-<h2>Enter API Endpoint below</h2>
-<p>Best pratices/potential security risk.......</p>
+<div class="w3-container w3-center">      
+    <h2>Best pratices/potential security risk.......</h2>
+    <p>xxxxxxx</p>
+    <br>
+    <form action="/result" method="POST" style="width:80%;max-width:320px;margin: 0 auto;">
+        <input type="text" name="url" id="url" placeholder="Enter URL / API Endpoint here" class="w3-input" required><br>
+        <button type="submit" class="w3-button w3-theme">Analyse</button>
+    </form>
+</div>
 
-
-<form action="/result" method="POST">
-    <input type="text" name="url" id="url" placeholder="API Endpoint" class="form-feild"><br>
+<!-- <form action="/result" method="POST">
+    <input type="text" name="url" id="url" placeholder="API Endpoint" class="form-field"><br>
     <button type="submit" class="add-btn">Analyse</button>
-</form>
-<br>
+</form> -->
 
-<p>Note how this page can be accesed on both '/' and '/home'. Look into app.py for more information</p>
+
+
 {% endblock %}

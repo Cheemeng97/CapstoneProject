@@ -1,51 +1,97 @@
 {% extends "template.html" %} {% block body %}
-<style>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+<span style="font-size: 100px;">&#9989;</span>
+<span style="font-size: 100px;">&#10060;</span>
+<span style="font-size: 100px;">&#10071;</span>
+<div class="w3-center">
+  <h2>Analysis Result</h2>
+  <p>Below are the result for <span style="color:blue;font-weight:bold">{{ url }}</span></p>
+</div>  
+
+<div class="w3-border">
+<div class="w3-bar w3-theme">
+  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'SSL')">TLS/SSL Certificate</button>
+  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'Paris')">Paris</button>
+  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'Tokyo')">Tokyo</button>
+</div>
+
+<!-- SSL -->
+<div id="SSL" class="w3-container city w3-animate-opacity">
+  <div style="text-align: left;">
+
+    <header class="w3-container w3-light-blue">
+      <h4>Common Name</h4>
+    </header>
+    <div class="w3-container">
+      <p>{{ sslChecker_results.CommonName }}</p>
+    </div>
+  
+    <header class="w3-container w3-light-blue">
+      <h4>List of SAN</h4>
+    </header>
+    <div class="w3-container">
+      <p>{{ sslChecker_results.SAN }}</p>
+    </div>
+  
+    <header class="w3-container w3-light-blue">
+      <h4>Issuer</h4>
+    </header>
+    <div class="w3-container">
+      <p>{{ sslChecker_results.Issuer }}</p>
+      <p>{{sslChecker_results.result_Issuer}}</p>
+    </div>
+  
+    <header class="w3-container w3-light-blue">
+      <h4>Valid From</h4> 
+    </header>
+    <div class="w3-container">
+      <p>{{ sslChecker_results.ValidFrom }} </p>
+      <p>{{sslChecker_results.result_ValidFrom}} </p>
+    </div>
+
+    <header class="w3-container w3-light-blue">
+      <h4>Valid To </h4>
+    </header>
+    <div class="w3-container">
+      <p>Certificate will expires on {{ sslChecker_results.ValidTo }} ({{sslChecker_results.result_DaysLeft}} days left from today)</p>
+      <p>{{sslChecker_results.result_ValidTo}}</p>
+    </div>
+
+  </div>
+</div>
+
+<div id="Paris" class="w3-container city w3-animate-opacity">
+  <h2>Paris</h2>
+  <p>Paris is the capital of France.</p> 
+  <p>The Paris area is one of the largest population centers in Europe, with more than 12 million inhabitants.</p>
+</div>
+
+<div id="Tokyo" class="w3-container city w3-animate-opacity">
+  <h2>Tokyo</h2>
+  <p>Tokyo is the capital of Japan.</p>
+  <p>It is the center of the Greater Tokyo Area, and the most populous metropolitan area in the world.</p>
+</div>
+</div>
+  
+<script>
+// Tabs
+function openCity(evt, cityName) {
+  var i;
+  var x = document.getElementsByClassName("city");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  var activebtn = document.getElementsByClassName("testbtn");
+  for (i = 0; i < x.length; i++) {
+    activebtn[i].className = activebtn[i].className.replace(" w3-dark-grey", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " w3-dark-grey";
 }
 
-td, th {
-  border: 1px solid #000000;
-  text-align: left;
-  padding: 8px;
-}
+var mybtn = document.getElementsByClassName("testbtn")[0];
+mybtn.click();
 
-/* tr:nth-child(even) {
-  background-color: #dddddd;
-} */
-</style>
+</script>
 
-<h2>Analysis Result</h2>
-<p>Below are the result for {{ url }}</p>
-
-<h3>TLS/SSL Certificate</h3>
-
-<p>{{ sslChecker_results.result_NullCheck }}</p>
-
-<table>
-  <tr>
-    <td>Common Name</td>
-    <td>{{ sslChecker_results.CommonName }}</td>
-    #if not null show green tick
-    <script>
-    if (sslCheck_result.CommonName = "*.google.com")
-    {<td><span style="color:green;width: 30px;">&#10003;</span></td>} 
-    else 
-    {<span style="color:red">&#10007;</span>}
-    </script>
-    
-  </tr>
-  <tr>
-    <td>SAN</td>
-    <td>{{ sslChecker_results.SAN }}</td>
-    <td>Germany</td>
-  </tr>
-</table>
-
-<!-- <p>Common Name: {{ sslChecker_results.CommonName }}</p>
-<p>SAN: {{ sslChecker_results.SAN }}</p> -->
-<p></p>
-<span style="color:green;width: 30px;">&#10003;</span> <span style="color:red">&#10007;</span> <span style="color:orange">&#33;</span>
 {% endblock %}
+  

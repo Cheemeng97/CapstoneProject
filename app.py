@@ -30,7 +30,7 @@ def analyse():
         #print(HttpStatusErrorCodeChecker_code_result)
 
         sslChecker_results = SSL_Checker(url)
-        print(sslChecker_results)
+        # print(sslChecker_results)
         
 
     return render_template("result.html",url=url,sslChecker_results=sslChecker_results) #rendering our account.html contained within /templates

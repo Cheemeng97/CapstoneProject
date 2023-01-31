@@ -112,13 +112,13 @@ def analyseSSLCert(hostinfo):
         "SAN": get_alt_names(hostinfo.cert),
         "Issuer": issuer,
         "result_TrustIssuer": result_trustIssuer,
-        "ValidFrom": str(validFrom),
+        "ValidFrom": str(validFrom.strftime('%Y-%m-%d')),
         "result_ValidFrom": result_validFrom,
-        "ValidTo": str(validTo),
+        "ValidTo": str(validTo.strftime('%Y-%m-%d')),
         "result_ValidTo": result_validTo,
         "result_DaysLeft": str(result_daysLeft.days)
     }
-
+    print(issuer)
     return results
 
     # #save to json

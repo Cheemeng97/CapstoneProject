@@ -1,23 +1,27 @@
 <html>
 <!-- This is the template file. Any code written here will automatically be carried onto the files that extend from this file(eg: home.html, account.html) -->
 <head>
-    <link rel="stylesheet" href="../static/style.css">
-    <title>API Security Learning Portal</title>
+    <!-- <link rel="stylesheet" href="../static/style.css"> -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-indigo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 </head>
 
-<body>
-    <div>
-        <center>
-            <h1 style="font-family:verdana;">API Security Learning Portal</h1>
-            <p>Educational Purposes</p>
-        </center>
+<!-- Header -->
+<header class="w3-container w3-theme w3-padding" id="myHeader">
+    <div class="w3-center">
 
+        <h1 class="w3-xxxlarge w3-animate-bottom">API Security Learning Portal</h1>
+        <h4>Educational Purposes</h4>
+        
     </div>
+</header>
+
+<body>
     <div>
         <center>
             {% block body %} {% endblock %}
         </center>
     </div>
 </body>
-
 </html>

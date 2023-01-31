@@ -22,18 +22,18 @@ body {
 .add-btn {
     height: 40px;
     width: 150px;
-    color: #000000;
-    background-color: #03d603;
-    border: 1px solid #029902;
+    color: #ffffff;
+    background-color: #969595;
+    border: 1px solid #000000;
     border-radius: 5px;
     padding: 10px;
     margin: 10px;
 }
 
 .add-btn:hover {
-    color: #029902;
-    background-color: #00ff002f;
-    border: 1px solid #029902;
+    color: #000000;
+    background-color: #ffffff2f;
+    border: 1px solid #000000;
     border-radius: 5px;
 }
 
@@ -44,14 +44,14 @@ body {
     border-radius: 5px;
 }
 
-.form-feild {
+.form-field {
     height: 40px;
     width: 200px;
-    border: 1px solid #99AAB5;
+    border: 1px solid #000000;
     border-radius: 5px;
     padding: 10px;
     margin: 10px;
-    background-color: #2C2F33;
+    background-color: #757575;
 }
 
 .span {
