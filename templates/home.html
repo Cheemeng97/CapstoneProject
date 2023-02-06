@@ -3,13 +3,37 @@
 <div class="w3-container w3-center">      
     <h2>Best pratices/potential security risk.......</h2>
     <p>xxxxxxx</p>
-    <br>
+    <!-- <br>
     <form action="/result" method="POST" style="width:80%;max-width:320px;margin: 0 auto;">
         <input type="text" name="url" id="url" placeholder="Enter URL / API Endpoint here" class="w3-input" required><br>
         <button type="submit" class="w3-button w3-theme">Analyse</button>
-    </form>
+    </form> -->
 </div>
-
+<div class="w3-container w3-center">   
+    <div class="w3-row-padding w3-center w3-margin-top">
+        <div class="w3-third">
+        <div class="w3-card w3-container" style="min-height:460px">
+        <h3>Analyse from URL</h3><br>
+        <i class="fa fa-desktop w3-margin-bottom w3-text-theme" style="font-size:120px"></i>
+            <form action="/result" method="POST" style="width:80%;max-width:320px;margin: 0 auto;">
+                <input type="text" name="url" id="url" placeholder="Enter URL / API Endpoint here" class="w3-input" required><br>
+                <button type="submit" class="w3-button w3-theme">Analyse</button>
+            </form>
+        </div>
+        </div>
+        
+        <div class="w3-third">
+        <div class="w3-card w3-container" style="min-height:460px">
+        <h3>Code Analysis</h3><br>
+        <i class="fa fa-css3 w3-margin-bottom w3-text-theme" style="font-size:120px"></i>
+            <form action="/result_codeAnalysis" method="POST" style="width:80%;max-width:320px;margin: 0 auto;">
+                <input type="file" id="file" name="filename" accept=".cs">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
 <!-- <form action="/result" method="POST">
     <input type="text" name="url" id="url" placeholder="API Endpoint" class="form-field"><br>
     <button type="submit" class="add-btn">Analyse</button>

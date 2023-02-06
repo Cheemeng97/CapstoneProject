@@ -1,19 +1,22 @@
-from flask import * #importing flask (Install it using python -m pip install flask)
+from flask import *
+from werkzeug.utils import secure_filename
+import os
 import requests
 from Logic.CheckStatusCode.HttpStatusErrorCodeChecker import httpStatusErrorCodeChecker
 from Logic.CheckSSL.ssl_checker import SSL_Checker
 
-app = Flask(__name__) #initialising flask
 
+app = Flask(__name__) 
+app.config['UPLOAD_PATH'] = 'uploads'
 
-@app.route("/") #defining the routes for the home() funtion (Multiple routes can be used as seen here)
+@app.route("/") 
 @app.route("/home")
 def home():
-    return render_template("home.html") #rendering our home.html contained within /templates
+    return render_template("home.html") 
 
-@app.route("/result", methods=["POST", "GET"]) #defining the routes for the account() funtion
+@app.route("/result", methods=["POST", "GET"]) 
 def analyse():
-    url = "<API Endpoint Not Defined>" #Creating a variable url
+    url = "<API Endpoint Not Defined>" 
 
     if (request.method == "POST"): #Checking if the method of request was post
         url = request.form["url"] #getting the url from the form on home page
@@ -35,7 +38,20 @@ def analyse():
 
     return render_template("result.html",url=url,sslChecker_results=sslChecker_results) #rendering our account.html contained within /templates
 
-
+@app.route("/result_codeAnalysis", methods=["POST", "GET"])
+def code_analyse():
+    if (request.method == "POST"):
+        uploaded_file = request.files['file']
+        filename = secure_filename(uploaded_file.filename)
+        if filename != '':
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS']:
+                abort(400)
+            uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        return redirect(url_for('index'))
+      
+      
+    return render_template("result_codeAnalysis.html")
 
 if __name__ == "__main__": #checking if __name__'s value is '__main__'. __name__ is an python environment variable who's value will always be '__main__' till this is the first instatnce of app.py running
     app.run(debug=True,port=4949) #running flask (Initalised on line 4)
