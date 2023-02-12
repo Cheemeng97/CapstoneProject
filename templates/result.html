@@ -10,7 +10,7 @@
 <div class="w3-border">
 <div class="w3-bar w3-theme">
   <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'SSL')">TLS/SSL Certificate</button>
-  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'Paris')">Paris</button>
+  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'EndpointAnalysis')">API Endpoint Analysis</button>
   <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'Tokyo')">Tokyo</button>
 </div>
 
@@ -62,10 +62,28 @@
 
 
 
-<div id="Paris" class="w3-container city w3-animate-opacity">
-  <h2>Paris</h2>
-  <p>Paris is the capital of France.</p> 
-  <p>The Paris area is one of the largest population centers in Europe, with more than 12 million inhabitants.</p>
+<div id="EndpointAnalysis" class="w3-container city w3-animate-opacity">
+  
+  
+  <div style="text-align: left;">
+
+    <header class="w3-container w3-light-blue">
+      <h4>Data format for sending and receiving API data</h4>
+    </header>
+    <div class="w3-container">
+      <p>{{docTypeChecker_contentType }} </p>
+      <p>{{docTypeChecker_result}}</p>
+    </div>
+  
+    <header class="w3-container w3-light-blue">
+      <h4>X-XSS-Protection</h4>
+    </header>
+    <div class="w3-container">
+      <p>{{xssChecker_xssProtection}}</p>
+      <p>{{xssChecker_result}}</p>
+    </div>
+  
+  </div>
 </div>
 
 

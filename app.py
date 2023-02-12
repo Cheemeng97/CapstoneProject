@@ -4,6 +4,9 @@ import os
 import requests
 from Logic.CheckStatusCode.HttpStatusErrorCodeChecker import httpStatusErrorCodeChecker
 from Logic.CheckSSL.ssl_checker import SSL_Checker
+from Logic.getMainUrl import getMainUrl
+from Logic.BestPractice.docType_checker import docTypeChecker
+from Logic.BestPractice.xss_checker import xssChecker
 
 UPLOAD_FOLDER = './uploads'
 
@@ -19,6 +22,9 @@ def home():
 @app.route("/result", methods=["POST", "GET"]) 
 @app.route("/result_codeAnalysis", methods=["POST", "GET"])
 def analyse():
+
+    
+
     if request.form['action'] == 'Submit_Url':
         url = "<API Endpoint Not Defined>" 
 
@@ -28,7 +34,7 @@ def analyse():
             if not url: #if name is not defined it is set to default string
                 url = "<API Endpoint Not Defined>"
 
-
+            original_url, main_url = getMainUrl(url)
             #response = requests.get(url)
             # print(response.status_code)
 
@@ -36,11 +42,13 @@ def analyse():
             #print(HttpStatusErrorCodeChecker_range_result)
             #print(HttpStatusErrorCodeChecker_code_result)
 
-            sslChecker_results = SSL_Checker(url)
-            # print(sslChecker_results)
-            
+            sslChecker_results = SSL_Checker(main_url)
+            docTypeChecker_contentType, docTypeChecker_result = docTypeChecker(original_url)
+            xssChecker_xssProtection, xssChecker_result = xssChecker(original_url)
 
-        return render_template("result.html",url=url,sslChecker_results=sslChecker_results) #rendering our account.html contained within /templates
+        return render_template("result.html",url=url,sslChecker_results=sslChecker_results, 
+        docTypeChecker_contentType = docTypeChecker_contentType, docTypeChecker_result=docTypeChecker_result,
+        xssChecker_xssProtection=xssChecker_xssProtection, xssChecker_result=xssChecker_result) #rendering our account.html contained within /templates
 
     elif request.form['action'] == 'Submit_File':
         if (request.method == "POST"):

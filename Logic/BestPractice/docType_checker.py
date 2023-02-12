@@ -1,14 +1,15 @@
 import requests
 
-r = requests.get('https://www.healthcare.gov/api/articles.json')
+def docTypeChecker(url):
+    # r = requests.get('https://www.healthcare.gov/api/articles.json')
+    r = requests.get(url)
 
-# print(r.headers)
-print(r.headers['content-type'])
+    content_type_result = "No content-type found in header."
+    content_type = r.headers['content-type'] 
 
-contect_type = r.headers['content-type'] 
-if contect_type != 'application/json':
-    print("Use JSON as content type for API response are recommended")
-else:
-    print("JSON is used as content type for API response. Good Practice!")
+    if content_type != 'application/json':
+        content_type_result = "Use JSON as content type for API response are recommended"
+    else:
+        content_type_result = "JSON is used as content type for API response. Good Practice!"
 
-
+    return content_type, content_type_result
