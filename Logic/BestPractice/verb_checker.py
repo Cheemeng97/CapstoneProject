@@ -33,29 +33,29 @@ def nltkFunction(input, iteration):
 
 endpointList = []
 
-def verb_checker():
-    with open('./TestData/BookController.cs', 'r') as file:
-        for line in file:
-            # find HttpGet and HttpPost and HttpPut and HttpDelete, print the line
-            if "HttpGet" in line or "HttpPost" in line or "HttpPut" in line or "HttpDelete" in line:
-                #remove space and store the line in a list
-                line = line.replace(" ", "")
-                endpointList.append(line)
+# def verb_checker():
+with open('./TestData/BookController.cs', 'r') as file:
+    for line in file:
+        # find HttpGet and HttpPost and HttpPut and HttpDelete, print the line
+        if "HttpGet" in line or "HttpPost" in line or "HttpPut" in line or "HttpDelete" in line:
+            #remove space and store the line in a list
+            line = line.replace(" ", "")
+            endpointList.append(line)
 
-        #loop through the list and print the endpoint
-        for line in endpointList:
-            currentEndPoint = line.split('"')[1]
-            currentEndPoint = currentEndPoint.replace("-", " ") # replace - with space
-            
-            result_EndPointUrl.append(currentEndPoint.replace(" ", "-"))  #store the endpoint in a list
-            returnHasVerb, returnVerbWord = nltkFunction(currentEndPoint, line)
-            result_HasVerb.append(returnHasVerb)
-            result_VerbWord.append(returnVerbWord)
+    #loop through the list and print the endpoint
+    for line in endpointList:
+        currentEndPoint = line.split('"')[1]
+        currentEndPoint = currentEndPoint.replace("-", " ") # replace - with space
+        
+        result_EndPointUrl.append(currentEndPoint.replace(" ", "-"))  #store the endpoint in a list
+        returnHasVerb, returnVerbWord = nltkFunction(currentEndPoint, line)
+        result_HasVerb.append(returnHasVerb)
+        result_VerbWord.append(returnVerbWord)
 
-    return(result_EndPointUrl, result_VerbWord, result_HasVerb)
-    # print(result_EndPointUrl)
-    # print(result_VerbWord)
-    # print(result_HasVerb)
+    # return(result_EndPointUrl, result_VerbWord, result_HasVerb)
+    print(result_EndPointUrl)
+    print(result_VerbWord)
+    print(result_HasVerb)
 
 
         
