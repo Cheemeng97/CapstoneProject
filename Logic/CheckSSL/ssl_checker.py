@@ -17,10 +17,8 @@ HOSTS = [
 ]
 
 def verify_cert(cert, hostname):
-    # verify notAfter/notBefore, CA trusted, servername/sni/hostname
     cert.has_expired()
-    # service_identity.pyopenssl.verify_hostname(client_ssl, hostname)
-    # issuer
+
 
 def get_certificate(hostname, port):
     hostname_idna = idna.encode(hostname)
@@ -120,11 +118,6 @@ def analyseSSLCert(hostinfo):
     }
     print(issuer)
     return results
-
-    # #save to json
-    # import json
-    # with open('./Results/ssl_result.json', 'w') as outfile:
-    #     json.dump(data, outfile)
 
 def check_it_out(hostname, port):
     hostinfo = get_certificate(hostname, port)
