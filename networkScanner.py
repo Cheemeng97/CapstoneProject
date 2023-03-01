@@ -4,18 +4,22 @@ import schedule
 import time
 from datetime import datetime
 import pandas as pd
+import subprocess
 
-
+def masterDevice():
+    masterDeviceName = socket.gethostname()
+    masterDeviceIP = socket.gethostbyname(masterDeviceName)
+    return masterDeviceName, masterDeviceIP
 
 # def job():
 
 print("Start Scanning.....")
 
 #Create datafrome to store the data
-df = pd.DataFrame(columns=['Name', 'IP', 'MAC'])
+df = pd.DataFrame(columns=['Master Device', 'Name', 'IP', 'MAC'])
 
 # Create ARP request packet
-packet = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst="192.168.50.12/24")
+packet = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst="192.168.50.0/24")
 
 # Send packet and capture response
 results = srp(packet, timeout=3, verbose=0)[0]
@@ -36,8 +40,14 @@ for device in devices:
         name = 'Unknown'
 
     #store the data in dataframe
-    df = df.append({'Name': name, 'IP': device['ip'], 'MAC': device['mac']}, ignore_index=True)
+    df = df.append({'Master Device':"", 'Name': name, 'IP': device['ip'], 'MAC': device['mac']}, ignore_index=True)
     # print(f"{name}    {device['ip']:16}    {device['mac']}")
+
+masterDeviceName, masterDeviceIP = masterDevice()
+
+df['Master Device'] = df['Name'].apply(lambda x: '*' if x == masterDeviceName else '')
+df['Master Device'] = df['IP'].apply(lambda x: '*' if x == masterDeviceIP else '')
+
 
 print(df)
 
