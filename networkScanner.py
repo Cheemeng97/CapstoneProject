@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 import pandas as pd
 import subprocess
+import netifaces as nf
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -13,58 +14,72 @@ def masterDevice():
     masterDeviceIP = socket.gethostbyname(masterDeviceName)
     return masterDeviceName, masterDeviceIP
 
-# def job():
-print("Start Scanning.....")
+def getWifiIP():
+    wifi_iface = nf.gateways()['default'][nf.AF_INET][1]
+    wifi_ip = None
+    for iface in nf.interfaces():
+        addrs = nf.ifaddresses(iface)
+        if iface == wifi_iface and nf.AF_INET in addrs:
+            wifi_ip = addrs[nf.AF_INET][0]['addr']
+            break
 
-df = pd.DataFrame(columns=['Master Device', 'Name', 'IP', 'MAC'])
-packet = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst="192.168.1.0/24") # Create ARP request packet
+    #change the last digit of the IP address to 0
+    wifi_ip = wifi_ip.rsplit('.', 1)[0] + '.0'
+    return wifi_ip
 
-print("Scanning device.....")
+def job():
+    print("Getting WiFi IP.....")
+    wifiIP = getWifiIP()
+    if wifiIP:
+        print("WiFi IP address: " + wifiIP)
+        print("Start Scanning.....")
 
-results = srp(packet, timeout=3, verbose=0)[0]
+        df = pd.DataFrame(columns=['Master Device', 'Name', 'IP', 'MAC'])
+        packet = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=f"{wifiIP}/24") # Create ARP request packet
 
-print("Generating results.....")
+        print("Scanning device.....")
 
-devices = []
-for result in results: # 0 = sent packet, 1 = received packet
-    devices.append({'ip': result[1].psrc, 'mac': result[1].hwsrc})
+        results = srp(packet, timeout=3, verbose=0)[0]
 
-currentDateTime = datetime.now()
+        print("Generating results.....")
 
-print("Devices connected to WiFi at "+ currentDateTime.strftime("%d/%m/%Y %H:%M:%S") + ":")
+        devices = []
+        for result in results: # 0 = sent packet, 1 = received packet
+            devices.append({'ip': result[1].psrc, 'mac': result[1].hwsrc})
 
-for device in devices:
-    try:
-        name = socket.gethostbyaddr(device['ip'])[0]
-    except socket.herror:
-        name = 'Unknown'
+        currentDateTime = datetime.now()
 
-    df = df.append({'Master Device':"", 'Name': name, 'IP': device['ip'], 'MAC': device['mac']}, ignore_index=True)
+        print("Devices connected to WiFi at "+ currentDateTime.strftime("%d/%m/%Y %H:%M:%S") + ":")
 
-#Check master device
-masterDeviceName, masterDeviceIP = masterDevice()
-df['Master Device'] = df['Name'].apply(lambda x: '*' if x == masterDeviceName else '')
-df['Master Device'] = df['IP'].apply(lambda x: '*' if x == masterDeviceIP else '')
+        for device in devices:
+            try:
+                name = socket.gethostbyaddr(device['ip'])[0]
+            except socket.herror:
+                name = 'Unknown'
+
+            df = df.append({'Master Device':"", 'Name': name, 'IP': device['ip'], 'MAC': device['mac']}, ignore_index=True)
+
+        #Check master device
+        masterDeviceName, masterDeviceIP = masterDevice()
+        df['Master Device'] = df['Name'].apply(lambda x: '*' if x == masterDeviceName else '')
+        df['Master Device'] = df['IP'].apply(lambda x: '*' if x == masterDeviceIP else '')
+
+        print(df)
+
+        #Analyse the Total number of devices connected to WiFi
+        totalDevices = len(df.index)
+        print("Total Devices Connected to WiFi: " + str(totalDevices))
+        knownDevices = len(df[df['Name'] != 'Unknown'].index)
+        print("Known Devices Connected to WiFi: " + str(knownDevices))
+        unknownDevices = len(df[df['Name'] == 'Unknown'].index)
+        print("Unknown Devices Connected to WiFi: " + str(unknownDevices))
+
+    else:
+        print("Could not find WiFi IP address")
 
 
-print(df)
+schedule.every(1).minutes.do(job)
 
-
-#Analyse the Total number of devices connected to WiFi
-totalDevices = len(df.index)
-print("Total Devices Connected to WiFi: " + str(totalDevices))
-knownDevices = len(df[df['Name'] != 'Unknown'].index)
-print("Known Devices Connected to WiFi: " + str(knownDevices))
-unknownDevices = len(df[df['Name'] == 'Unknown'].index)
-print("Unknown Devices Connected to WiFi: " + str(unknownDevices))
-
-
-
-
-
-
-# schedule.every(40).seconds.do(job)
-
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
