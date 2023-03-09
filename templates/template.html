@@ -1,5 +1,14 @@
 <html>
 <!-- This is the template file. Any code written here will automatically be carried onto the files that extend from this file(eg: home.html, account.html) -->
+
+<!-- Navigation Bar -->
+<div class="w3-bar w3-white w3-large">
+    <a href="#" class="w3-bar-item w3-button w3-red w3-mobile"><i class="fa fa-user-secret w3-margin-right"></i>Learning Portal</a>
+    <a href="{{ url_for('home') }}" class="w3-bar-item w3-button w3-mobile">Home</a>
+    <a href="{{ url_for('register') }}" class="w3-bar-item w3-button w3-mobile">Registration</a>
+</div>
+
+
 <head>
     <!-- <link rel="stylesheet" href="../static/style.css"> -->
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">

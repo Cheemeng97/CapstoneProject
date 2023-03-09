@@ -16,7 +16,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route("/") 
 @app.route("/home")
 def home():
-    
     return render_template("home.html") 
 
 @app.route("/result", methods=["POST", "GET"]) 
@@ -69,7 +68,9 @@ def analyse():
                 return render_template("result_codeAnalysis.html")
 
 
-
+@app.route("/register")
+def register():
+    return render_template("register.html")
 
 
 # @app.route("/result_codeAnalysis", methods=["POST", "GET"])
