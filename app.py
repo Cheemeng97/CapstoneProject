@@ -68,9 +68,17 @@ def analyse():
                 return render_template("result_codeAnalysis.html")
 
 
-@app.route("/register")
+@app.route("/register", methods=['GET', 'POST'])
 def register():
-    return render_template("register.html")
+    if request.method == 'POST':
+        if 'Register' in request.form:
+            studentID = request.form['studentID']
+            moduleCode = request.form['moduleCode']
+            macAddress = request.form['macAddress']
+
+            print(studentID, moduleCode, macAddress)
+    else:   
+        return render_template("register.html")
 
 
 # @app.route("/result_codeAnalysis", methods=["POST", "GET"])

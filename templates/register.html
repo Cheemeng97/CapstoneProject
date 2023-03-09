@@ -16,22 +16,22 @@
     <div class="w3-container w3-center">
         <h2 class="w3-center" style="justify-content: center; display: flex;">Registration Form</h2>
 
-        <form class="w3-container w3-card-4">
+        <form class="w3-container w3-card-4" action="/" method="POST">
             <h2>Input Form</h2>
             <div class="w3-section">      
-                <input class="w3-input" type="text" required>
+                <input class="w3-input" id="studentID" type="text" pattern="[a-zA-Z0-9]{8}" required title="Please enter valid Student ID" required>
                 <label>Student ID</label>
             </div>
             <div class="w3-section">      
-                <input class="w3-input" type="text" required>
+                <input class="w3-input" id="moduleCode" type="text" pattern="[a-zA-Z0-9]{8}" required title="Please enter valid Module Code" required>
                 <label>Module Code</label>
             </div>
             <div class="w3-section">      
-                <input class="w3-input" type="text" required>
+                <input class="w3-input" id="macAddress" type="text" pattern="([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})" required title="Please enter valid Mac Address. E.g. 01:23:45:67:89:ab" required>
                 <label>MAC address</label>
             </div>
             <div class="w3-section"> 
-                <button class="w3-btn w3-theme" onclick="move()">Register</button> 
+                <input class="w3-btn w3-theme" type="submit" name="Register" value="Register">
             </div>
         </form>
     </div> 
