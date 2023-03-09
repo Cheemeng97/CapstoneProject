@@ -21,9 +21,6 @@ def home():
 @app.route("/result", methods=["POST", "GET"]) 
 @app.route("/result_codeAnalysis", methods=["POST", "GET"])
 def analyse():
-
-    
-
     if request.form['action'] == 'Submit_Url':
         url = "<API Endpoint Not Defined>" 
 
@@ -49,6 +46,8 @@ def analyse():
         docTypeChecker_contentType = docTypeChecker_contentType, docTypeChecker_result=docTypeChecker_result,
         xssChecker_xssProtection=xssChecker_xssProtection, xssChecker_result=xssChecker_result) #rendering our account.html contained within /templates
 
+
+
     elif request.form['action'] == 'Submit_File':
         if (request.method == "POST"):
         
@@ -71,15 +70,17 @@ def analyse():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        if 'Register' in request.form:
-            studentID = request.form['studentID']
-            moduleCode = request.form['moduleCode']
-            macAddress = request.form['macAddress']
-
-            print(studentID, moduleCode, macAddress)
+        if request.form['action'] == 'Register':
+            studentID = request.form["studentID"]
+            moduleCode = request.form["moduleCode"]
+            macAddress = request.form["macAddress"]
+            return render_template("register-list.html", studentID=studentID, moduleCode=moduleCode, macAddress=macAddress)
     else:   
         return render_template("register.html")
 
+@app.route("/register-list", methods=['GET', 'POST'])
+def register_list():
+    return render_template("register-list.html",)
 
 # @app.route("/result_codeAnalysis", methods=["POST", "GET"])
 # def code_analyse():
