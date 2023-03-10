@@ -11,7 +11,35 @@
         <p>{{studentID}} </p>
         <p>{{moduleCode}}</p>
         <p>{{macAddress}}</p>
-      </div>
+    </div>
+
+    <div class="w3-container">
+        <table class="w3-table-all w3-card-4">
+            <thead>
+                <tr class="w3-blue">
+                    <th>Student ID</th>
+                    <th>Module Code</th>
+                    <th>MAC Address</th>
+                    <th>Registered On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in data %}
+                <tr>
+                    <td>{{ record.studentID }}</td>
+                    <td>{{ record.moduleCode }}</td>
+                    <td>{{ record.macAddress }}</td>
+                    <td>{{ record.registeredOn }}</td>
+                </tr>
+                {% endfor %}
+                {% if not data %}
+                <tr>
+                    <td colspan="3">No data found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 

@@ -4,7 +4,7 @@ import schedule
 import time
 from datetime import datetime
 import pandas as pd
-import subprocess
+from pymongo import MongoClient
 import netifaces as nf
 import warnings
 warnings.filterwarnings('ignore')
@@ -57,28 +57,39 @@ def job():
             except socket.herror:
                 name = 'Unknown'
 
-            df = df.append({'Master Device':"", 'Name': name, 'IP': device['ip'], 'MAC': device['mac']}, ignore_index=True)
-
-        #Check master device
-        masterDeviceName, masterDeviceIP = masterDevice()
-        df['Master Device'] = df['Name'].apply(lambda x: '*' if x == masterDeviceName else '')
-        df['Master Device'] = df['IP'].apply(lambda x: '*' if x == masterDeviceIP else '')
-
-        print(df)
+            #Check master device
+            masterDeviceName, masterDeviceIP = masterDevice()
+            masterDeviceCheck = "0"
+            if device['ip'] == masterDeviceIP:
+                masterDeviceCheck = "1"
+            if name == masterDeviceName:
+                masterDeviceCheck = "1"
+            
+            #save to MongoDB
+            client = MongoClient('localhost', 27017)
+            db = client['CapstoneProject']
+            collection = db['NetworkScanRecord']
+            collection.insert_one({
+                'Name': name, 
+                'IP': device['ip'],
+                'MAC': device['mac'],
+                'Master Device': masterDeviceCheck, 
+                'Date': currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
+                })
 
         #Analyse the Total number of devices connected to WiFi
-        totalDevices = len(df.index)
-        print("Total Devices Connected to WiFi: " + str(totalDevices))
-        knownDevices = len(df[df['Name'] != 'Unknown'].index)
-        print("Known Devices Connected to WiFi: " + str(knownDevices))
-        unknownDevices = len(df[df['Name'] == 'Unknown'].index)
-        print("Unknown Devices Connected to WiFi: " + str(unknownDevices))
+        # totalDevices = len(df.index)
+        # print("Total Devices Connected to WiFi: " + str(totalDevices))
+        # knownDevices = len(df[df['Name'] != 'Unknown'].index)
+        # print("Known Devices Connected to WiFi: " + str(knownDevices))
+        # unknownDevices = len(df[df['Name'] == 'Unknown'].index)
+        # print("Unknown Devices Connected to WiFi: " + str(unknownDevices))
 
     else:
         print("Could not find WiFi IP address")
 
 
-schedule.every(1).minutes.do(job)
+schedule.every(15).seconds.do(job)
 
 while True:
     schedule.run_pending()

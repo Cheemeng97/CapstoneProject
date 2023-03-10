@@ -1,17 +1,25 @@
 from flask import *
 from werkzeug.utils import secure_filename
 import os
-import requests
+import datetime
 from Logic.CheckStatusCode.HttpStatusErrorCodeChecker import httpStatusErrorCodeChecker
 from Logic.CheckSSL.ssl_checker import SSL_Checker
 from Logic.getMainUrl import getMainUrl
 from Logic.BestPractice.docType_checker import docTypeChecker
 from Logic.BestPractice.xss_checker import xssChecker
+from pymongo import MongoClient
 
 UPLOAD_FOLDER = './uploads'
 
 app = Flask(__name__) 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+def db_registration():
+    client = MongoClient('localhost', 27017)
+    db = client['CapstoneProject']
+    collection = db['Registration']
+    return collection
 
 @app.route("/") 
 @app.route("/home")
@@ -68,19 +76,33 @@ def analyse():
 
 
 @app.route("/register", methods=['GET', 'POST'])
-def register():
+def register():  
+    return render_template("register.html")
+
+@app.route("/register-list", methods=['GET', 'POST'])
+def register_list():
     if request.method == 'POST':
         if request.form['action'] == 'Register':
             studentID = request.form["studentID"]
             moduleCode = request.form["moduleCode"]
             macAddress = request.form["macAddress"]
-            return render_template("register-list.html", studentID=studentID, moduleCode=moduleCode, macAddress=macAddress)
-    else:   
-        return render_template("register.html")
 
-@app.route("/register-list", methods=['GET', 'POST'])
-def register_list():
-    return render_template("register-list.html",)
+            currentTime = datetime.datetime.now()
+            db_registration().insert_one({
+                "studentID": studentID,
+                "moduleCode": moduleCode,
+                "macAddress": macAddress,
+                "registeredOn": currentTime
+            })
+
+            client = MongoClient('localhost', 27017)
+            db = client['CapstoneProject']
+            collection = db['Registration']
+            data = list(collection.find())
+
+    return render_template("register-list.html", studentID=studentID, moduleCode=moduleCode, macAddress=macAddress, data=data)
+
+
 
 # @app.route("/result_codeAnalysis", methods=["POST", "GET"])
 # def code_analyse():
@@ -105,7 +127,11 @@ def register_list():
         
             # return render_template("result_codeAnalysis.html")
 
+
+
 if __name__ == "__main__": 
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.run(debug=True,port=4949) 
+
+
