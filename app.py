@@ -79,28 +79,25 @@ def analyse():
 def register():  
     return render_template("register.html")
 
+@app.route('/save-registration-data', methods=['POST'])
+def save_registration_data():
+    client = MongoClient('localhost', 27017)
+    db = client['CapstoneProject']
+    collection = db['Registration']
+    currentDateTime = datetime.datetime.now()
+    data = request.get_json()
+    data['registeredOn'] = currentDateTime
+    result = collection.insert_one(data)
+    return jsonify({'message': 'Data saved to MongoDB'})
+
 @app.route("/register-list", methods=['GET', 'POST'])
 def register_list():
-    if request.method == 'POST':
-        if request.form['action'] == 'Register':
-            studentID = request.form["studentID"]
-            moduleCode = request.form["moduleCode"]
-            macAddress = request.form["macAddress"]
+    client = MongoClient('localhost', 27017)
+    db = client['CapstoneProject']
+    collection = db['Registration']
+    data = list(collection.find())
 
-            currentTime = datetime.datetime.now()
-            db_registration().insert_one({
-                "studentID": studentID,
-                "moduleCode": moduleCode,
-                "macAddress": macAddress,
-                "registeredOn": currentTime
-            })
-
-            client = MongoClient('localhost', 27017)
-            db = client['CapstoneProject']
-            collection = db['Registration']
-            data = list(collection.find())
-
-    return render_template("register-list.html", studentID=studentID, moduleCode=moduleCode, macAddress=macAddress, data=data)
+    return render_template("register-list.html", data=data)
 
 
 
