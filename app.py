@@ -86,6 +86,7 @@ def save_registration_data():
     db = client['CapstoneProject']
     collection = db['Registration']
     currentDateTime = datetime.datetime.now()
+    currentDateTime = currentDateTime.strftime("%d/%m/%Y %H:%M:%S")   
     data = request.get_json()
     data['registeredOn'] = currentDateTime
     result = collection.insert_one(data)
@@ -103,6 +104,7 @@ def register_list():
 
 @app.route('/refreshRegistrationData')
 def refresh_registration_data():
+    app.logger.info('Refreshing registration data...')
     client = MongoClient('localhost', 27017)
     db = client['CapstoneProject']
     collection = db['Registration']
