@@ -79,6 +79,7 @@ def analyse():
 def register():  
     return render_template("register.html")
 
+
 @app.route('/save-registration-data', methods=['POST'])
 def save_registration_data():
     client = MongoClient('localhost', 27017)
@@ -90,6 +91,7 @@ def save_registration_data():
     result = collection.insert_one(data)
     return jsonify({'message': 'Data saved to MongoDB'})
 
+
 @app.route("/register-list", methods=['GET', 'POST'])
 def register_list():
     client = MongoClient('localhost', 27017)
@@ -99,7 +101,13 @@ def register_list():
 
     return render_template("register-list.html", data=data)
 
-
+@app.route('/refreshRegistrationData')
+def refresh_registration_data():
+    client = MongoClient('localhost', 27017)
+    db = client['CapstoneProject']
+    collection = db['Registration']
+    data = list(collection.find({}, {'_id': 0}))
+    return jsonify(data)
 
 # @app.route("/result_codeAnalysis", methods=["POST", "GET"])
 # def code_analyse():

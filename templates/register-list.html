@@ -1,6 +1,5 @@
 {% extends "template.html" %} {% block body %}
 
-
 <div class="w3-container w3-center">      
     <h2>Register List</h2>
     <p>xxxxxxx</p>
@@ -14,7 +13,7 @@
     </div>
 
     <div class="w3-container">
-        <table class="w3-table-all w3-card-4">
+        <table class="w3-table-all w3-card-4" id="registrationTable">
             <thead>
                 <tr class="w3-blue">
                     <th>Student ID</th>
@@ -42,5 +41,28 @@
     </div>
 </div>
 
+<script>
+// refresh table every 2 minutes
+function updateTable() {
+        fetch('/refreshRegistrationData')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.querySelector('#registrationTable tbody');
+                tbody.innerHTML = '';
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.studentID}</td>
+                        <td>${row.moduleCode}</td>
+                        <td>${row.macAddress}</td>
+                        <td>${row.registeredOn}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+    }
+    setInterval(updateTable, 30000);
+    // setInterval(updateTable, 120000);
 
+</script>
 {% endblock %}
