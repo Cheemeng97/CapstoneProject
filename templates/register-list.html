@@ -39,30 +39,74 @@
             </tbody>
         </table>
     </div>
+
+
+    <div class="w3-container">
+        <table class="w3-table-all w3-card-4" id="checkingTable">
+            <thead>
+                <tr class="w3-blue">
+                    <th>MAC Address</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in checkingData %}
+                <tr>
+                    <td>{{ record.macAddress }}</td>
+                    <td>{{ record.status }}</td>
+                </tr>
+                {% endfor %}
+                {% if not data %}
+                <tr>
+                    <td colspan="3">No data found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
 // refresh table every 2 minutes
-function updateTable() {
-        fetch('/refreshRegistrationData')
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.querySelector('#registrationTable tbody');
-                tbody.innerHTML = '';
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${row.studentID}</td>
-                        <td>${row.moduleCode}</td>
-                        <td>${row.macAddress}</td>
-                        <td>${row.registeredOn}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+// function updateTable() {
+//         fetch('/refreshRegistrationData')
+//             .then(response => response.json())
+//             .then(data => {
+//                 const tbody = document.querySelector('#registrationTable tbody');
+//                 tbody.innerHTML = '';
+//                 data.forEach(row => {
+//                     const tr = document.createElement('tr');
+//                     tr.innerHTML = `
+//                         <td>${row.studentID}</td>
+//                         <td>${row.moduleCode}</td>
+//                         <td>${row.macAddress}</td>
+//                         <td>${row.registeredOn}</td>
+//                     `;
+//                     tbody.appendChild(tr);
+//                 });
+//             });
+//     }
+//     setInterval(updateTable, 30000);
+//     // setInterval(updateTable, 120000);
+
+function updateCheckingTable() {
+    fetch('/refreshRegistrationData')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector('#checkingTable tbody');
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.macAddress}</td>
+                    <td>${row.status}</td>
+                `;
+                tbody.appendChild(tr);
             });
-    }
-    setInterval(updateTable, 30000);
-    // setInterval(updateTable, 120000);
+        });
+}
+setInterval(updateTable, 30000);
+// setInterval(updateTable, 120000);
 
 </script>
 {% endblock %}
