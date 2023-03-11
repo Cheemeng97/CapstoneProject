@@ -7,7 +7,6 @@ import pandas as pd
 from pymongo import MongoClient
 import netifaces as nf
 import warnings
-warnings.filterwarnings('ignore')
 
 def masterDevice():
     masterDeviceName = socket.gethostname()
@@ -27,70 +26,74 @@ def getWifiIP():
     wifi_ip = wifi_ip.rsplit('.', 1)[0] + '.0'
     return wifi_ip
 
-# def job():
-print("Getting WiFi IP.....")
-wifiIP = getWifiIP()
-if wifiIP:
-    print("WiFi IP address: " + wifiIP)
-    print("Start Scanning.....")
+def job():
+    print('Performing Network Scanning ......')
+    # print("Getting WiFi IP.....")
+    wifiIP = getWifiIP()
+    if wifiIP:
+        # print("WiFi IP address: " + wifiIP)
+        # print("Start Scanning.....")
 
-    #df = pd.DataFrame(columns=['Master Device', 'Name', 'IP', 'MAC'])
-    packet = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=f"{wifiIP}/24") # Create ARP request packet
+        #df = pd.DataFrame(columns=['Master Device', 'Name', 'IP', 'MAC'])
+        packet = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=f"{wifiIP}/24") # Create ARP request packet
 
-    print("Scanning device.....")
+        # print("Scanning device.....")
 
-    results = srp(packet, timeout=3, verbose=0)[0]
+        results = srp(packet, timeout=3, verbose=0)[0]
 
-    print("Generating results.....")
+        # print("Generating results.....")
 
-    devices = []
-    for result in results: # 0 = sent packet, 1 = received packet
-        devices.append({'ip': result[1].psrc, 'mac': result[1].hwsrc})
+        devices = []
+        for result in results: # 0 = sent packet, 1 = received packet
+            devices.append({'ip': result[1].psrc, 'mac': result[1].hwsrc})
 
-    currentDateTime = datetime.now()
+        currentDateTime = datetime.now()
 
-    print("Devices connected to WiFi at "+ currentDateTime.strftime("%d/%m/%Y %H:%M:%S") + ":")
+        # print("Devices connected to WiFi at "+ currentDateTime.strftime("%d/%m/%Y %H:%M:%S") + ":")
 
-    for device in devices:
-        try:
-            name = socket.gethostbyaddr(device['ip'])[0]
-        except socket.herror:
-            name = 'Unknown'
+        for device in devices:
+            try:
+                name = socket.gethostbyaddr(device['ip'])[0]
+            except socket.herror:
+                name = 'Unknown'
 
-        #Check master device
-        masterDeviceName, masterDeviceIP = masterDevice()
-        masterDeviceCheck = "0"
-        if device['ip'] == masterDeviceIP:
-            masterDeviceCheck = "1"
-        if name == masterDeviceName:
-            masterDeviceCheck = "1"
-        
-        #save to MongoDB
-        client = MongoClient('localhost', 27017)
-        db = client['CapstoneProject']
-        collection = db['NetworkScanRecord']
-        collection.insert_one({
-            'Name': name, 
-            'IP': device['ip'],
-            'MAC': device['mac'],
-            'Master Device': masterDeviceCheck, 
-            'Date': currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
-            })
+            #Check master device
+            masterDeviceName, masterDeviceIP = masterDevice()
+            masterDeviceCheck = "0"
+            if device['ip'] == masterDeviceIP:
+                masterDeviceCheck = "1"
+            if name == masterDeviceName:
+                masterDeviceCheck = "1"
 
-        #Analyse the Total number of devices connected to WiFi
-        # totalDevices = len(df.index)
-        # print("Total Devices Connected to WiFi: " + str(totalDevices))
-        # knownDevices = len(df[df['Name'] != 'Unknown'].index)
-        # print("Known Devices Connected to WiFi: " + str(knownDevices))
-        # unknownDevices = len(df[df['Name'] == 'Unknown'].index)
-        # print("Unknown Devices Connected to WiFi: " + str(unknownDevices))
+            #save to MongoDB
+            client = MongoClient('localhost', 27017)
+            db = client['CapstoneProject']
+            collection = db['NetworkScanRecord']
+            collection.insert_one({
+                'Name': name, 
+                'IP': device['ip'],
+                'MAC': device['mac'],
+                'Master Device': masterDeviceCheck, 
+                'Date': currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
+                })
 
-else:
-    print("Could not find WiFi IP address")
+            #Analyse the Total number of devices connected to WiFi
+            # totalDevices = len(df.index)
+            # print("Total Devices Connected to WiFi: " + str(totalDevices))
+            # knownDevices = len(df[df['Name'] != 'Unknown'].index)
+            # print("Known Devices Connected to WiFi: " + str(knownDevices))
+            # unknownDevices = len(df[df['Name'] == 'Unknown'].index)
+            # print("Unknown Devices Connected to WiFi: " + str(unknownDevices))
+
+    else:
+        print("Could not find WiFi IP address")
+
+    print('Done Network Scanning')
 
 
-# schedule.every(15).seconds.do(job)
+schedule.every(5).minutes.do(job)
+job()
 
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
