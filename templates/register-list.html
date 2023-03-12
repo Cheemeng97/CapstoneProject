@@ -5,12 +5,6 @@
 </head>
 
 
-
-<div class="w3-container w3-center">      
-    <h2>XXXXXXXX</h2>
-    <p>xxxxxxx</p>
-</div>
-
 <h2>Registered Student List</h2>
 <p>Records of student that already registered in the system</p>
 <div class="w3-container w3-center"  style="margin-bottom: 50px;">  
@@ -53,9 +47,9 @@
 <h2>Network Check List</h2>
 <p>Record of checking MAC address that student registed with network scanning records</p>
 <p></p>
-<p><span style="color:rgb(4, 201, 37);font-weight:bold">Green</span> - registered by student and appear in network scan record</p>
-<p><span style="color:rgb(194, 6, 6);font-weight:bold">Red</span> - registered by student but not appear in network scan record</p>
-<p><span style="color:rgb(219, 145, 6);font-weight:bold">Orange</span> - not registered by student but appear in network scan record</p>
+<p><span style="color:green;font-weight:bold">Green</span> - registered by student and appear in network scan record</p>
+<p><span style="color:red;font-weight:bold">Red</span> - registered by student but not appear in network scan record</p>
+<p><span style="color:orange;font-weight:bold">Orange</span> - not registered by student but appear in network scan record</p>
 
 <div class="w3-container w3-center">
     <div class="w3-container">
@@ -68,7 +62,7 @@
             </thead>
             <tbody>
                 {% for record in checkingData %}
-                <tr>
+                <tr bgcolor="{{ 'green' if record.status == '1' else 'red' if record.status == '2' else 'orange' if record.status == '3' else 'white' }}">
                     <td>{{ record.macAddress }}</td>
                     <td>{{ record.status }}</td>
                 </tr>
