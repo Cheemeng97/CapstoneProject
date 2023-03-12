@@ -9,7 +9,6 @@ from Logic.BestPractice.docType_checker import docTypeChecker
 from Logic.BestPractice.xss_checker import xssChecker
 from pymongo import MongoClient
 import subprocess
-from checkingRecords import checkingRecordsJob
 
 UPLOAD_FOLDER = './uploads'
 
@@ -100,7 +99,7 @@ def save_registration_data():
     currentDateTime = currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
     data = request.get_json()
     data['registeredOn'] = currentDateTime
-    result = collection.insert_one(data)
+    collection.insert_one(data)
     return jsonify({'message': 'Data saved to MongoDB'})
 
 
@@ -115,20 +114,6 @@ def register_list():
     checkingData = list(collection.find())
 
     return render_template("register-list.html", data=data, checkingData=checkingData)
-
-@app.route('/refreshRegistrationData')
-def refresh_registration_data():
-    app.logger.info('Refreshing registration data...')
-    client = MongoClient('localhost', 27017)
-    db = client['CapstoneProject']
-    # collection = db['Registration']
-    # data = list(collection.find({}, {'_id': 0}))
-
-    collection = db['CheckRegistrationRecords']
-    checkingData = list(collection.find({}, {'_id': 0}))
-
-    # return jsonify(data, checkingData)
-    return jsonify(checkingData)
 
 # @app.route("/result_codeAnalysis", methods=["POST", "GET"])
 # def code_analyse():

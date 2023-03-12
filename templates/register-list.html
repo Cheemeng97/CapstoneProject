@@ -1,5 +1,11 @@
 {% extends "template.html" %} {% block body %}
 
+<head>
+    <meta http-equiv="refresh" content="120">
+</head>
+
+
+
 <div class="w3-container w3-center">      
     <h2>Register List</h2>
     <p>xxxxxxx</p>
@@ -89,23 +95,23 @@
 //     setInterval(updateTable, 30000);
 //     // setInterval(updateTable, 120000);
 
-function updateCheckingTable() {
-    fetch('/refreshRegistrationData')
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.querySelector('#checkingTable tbody');
-            tbody.innerHTML = '';
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${row.macAddress}</td>
-                    <td>${row.status}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        });
-}
-setInterval(updateTable, 30000); //30 secs
+// function updateCheckingTable() {
+//     fetch('/refreshRegistrationData')
+//         .then(response => response.json())
+//         .then(data => {
+//             const tbody = document.querySelector('#checkingTable tbody');
+//             tbody.innerHTML = '';
+//             data.forEach(row => {
+//                 const tr = document.createElement('tr');
+//                 tr.innerHTML = `
+//                     <td>${row.macAddress}</td>
+//                     <td>${row.status}</td>
+//                 `;
+//                 tbody.appendChild(tr);
+//             });
+//         });
+// }
+// setInterval(updateTable, 30000); //30 secs
 // setInterval(updateTable, 120000); // 2 minutes
 
 </script>
