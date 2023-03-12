@@ -27,7 +27,8 @@ def getWifiIP():
     return wifi_ip
 
 def job():
-    print('Performing Network Scanning ......')
+    startTime = datetime.now()
+    print("Performing Network Scanning " + str(startTime) + " ......")
     # print("Getting WiFi IP.....")
     wifiIP = getWifiIP()
     if wifiIP:

@@ -9,75 +9,22 @@ from Logic.BestPractice.docType_checker import docTypeChecker
 from Logic.BestPractice.xss_checker import xssChecker
 from pymongo import MongoClient
 import subprocess
-import time
-from threading import Thread
-import netifaces as nf
+from checkingRecords import checkingRecordsJob
 
 UPLOAD_FOLDER = './uploads'
 
-app = Flask(__name__) 
+app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+############################# Background services #########################################
 
-############################# Check Registration Records against Netwrk Scanner Results #########################################
-
-def run_checkRegistrationRecords():
-    while True:
-        print('Checking Registration Records...')
-
-        client = MongoClient('localhost', 27017)
-        db = client['CapstoneProject']
-        collection_registration = db['Registration']
-        collection_networkScanRecord = db['NetworkScanRecord']
-
-        macAddressList_registration = []
-        for x in collection_registration.find():
-            macAddressList_registration.append(x['macAddress'])
-
-        macAddressList_networkScanRecord = []
-        for x in collection_networkScanRecord.find():
-            macAddressList_networkScanRecord.append(x['MAC'])
-
-        nameList_networkScanRecord = []
-        for x in collection_networkScanRecord.find():
-            nameList_networkScanRecord.append(x['Name'])
-
-        # 1 - registered by student and appear in network scan record # green
-        # 2 - registered by student but not appear in network scan record # red
-        # 3 - not registered by student but appear in network scan record # orange
-
-        for macAddress in macAddressList_registration:
-            print(macAddress)
-            if macAddress in macAddressList_networkScanRecord:
-                collection_checkRegistrationRecords = db['CheckRegistrationRecords']
-                collection_checkRegistrationRecords.insert_one({
-                    'macAddress': macAddress,
-                    'status': '1'
-                    })
-            else:
-                collection_checkRegistrationRecords = db['CheckRegistrationRecords']
-                collection_checkRegistrationRecords.insert_one({
-                    'macAddress': macAddress,
-                    'status': '2'
-                    })
-                
-        for macAddress in macAddressList_networkScanRecord:
-            if macAddress not in macAddressList_registration:
-                collection_checkRegistrationRecords = db['CheckRegistrationRecords']
-                collection_checkRegistrationRecords.insert_one({
-                    'macAddress': macAddress,
-                    'status': '3'
-                    })
-                
-        print('Done Checking Registration Records...')
-        time.sleep(30) # 30 sec
-        # time.sleep(120) # 2 minutes
+def start_networkScannerJob():
+    subprocess.Popen(['python', 'networkScanner.py'])
 
 
-checkRegistrationRecords_thread = Thread(target=run_checkRegistrationRecords)
-checkRegistrationRecords_thread.start()
+def start_checkRegistrationRecordsJob():
+    subprocess.Popen(['python', 'checkingRecords.py'])
 #################################################################################################################################
-
 
 
 def db_registration():
@@ -86,16 +33,16 @@ def db_registration():
     collection = db['Registration']
     return collection
 
-@app.route("/") 
+@app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html") 
+    return render_template("home.html")
 
-@app.route("/result", methods=["POST", "GET"]) 
+@app.route("/result", methods=["POST", "GET"])
 @app.route("/result_codeAnalysis", methods=["POST", "GET"])
 def analyse():
     if request.form['action'] == 'Submit_Url':
-        url = "<API Endpoint Not Defined>" 
+        url = "<API Endpoint Not Defined>"
 
         if (request.method == "POST"): #Checking if the method of request was post
             url = request.form["url"] #getting the url from the form on home page
@@ -115,15 +62,14 @@ def analyse():
             docTypeChecker_contentType, docTypeChecker_result = docTypeChecker(original_url)
             xssChecker_xssProtection, xssChecker_result = xssChecker(original_url)
 
-        return render_template("result.html",url=url,sslChecker_results=sslChecker_results, 
+        return render_template("result.html",url=url,sslChecker_results=sslChecker_results,
         docTypeChecker_contentType = docTypeChecker_contentType, docTypeChecker_result=docTypeChecker_result,
         xssChecker_xssProtection=xssChecker_xssProtection, xssChecker_result=xssChecker_result) #rendering our account.html contained within /templates
 
 
-
     elif request.form['action'] == 'Submit_File':
         if (request.method == "POST"):
-        
+
             if 'file' not in request.files:
                 flash('No file part')
                 return redirect(request.url)
@@ -132,7 +78,7 @@ def analyse():
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
-            
+
             if file:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -141,7 +87,7 @@ def analyse():
 
 
 @app.route("/register", methods=['GET', 'POST'])
-def register():  
+def register():
     return render_template("register.html")
 
 
@@ -151,7 +97,7 @@ def save_registration_data():
     db = client['CapstoneProject']
     collection = db['Registration']
     currentDateTime = datetime.datetime.now()
-    currentDateTime = currentDateTime.strftime("%d/%m/%Y %H:%M:%S")   
+    currentDateTime = currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
     data = request.get_json()
     data['registeredOn'] = currentDateTime
     result = collection.insert_one(data)
@@ -188,7 +134,7 @@ def refresh_registration_data():
 # def code_analyse():
 #     if request.form['action'] == 'Submit_File':
 #         if (request.method == "POST"):
-        
+
 #             if 'file' not in request.files:
 #                 flash('No file part')
 #                 return redirect(request.url)
@@ -197,21 +143,25 @@ def refresh_registration_data():
 #             if file.filename == '':
 #                 flash('No selected file')
 #                 return redirect(request.url)
-            
+
 #             if file:
 #                 filename = secure_filename(file.filename)
 #                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 #                 # return redirect(url_for('uploaded_file', filename=filename))
 #                 return render_template("result_codeAnalysis.html")
-        
-        
+
+
             # return render_template("result_codeAnalysis.html")
 
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
+    start_networkScannerJob()
+    start_checkRegistrationRecordsJob()
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
-    app.run(debug=True,port=4949) 
+    app.run(debug=False,port=4949)
+
+
 
 
