@@ -38,7 +38,6 @@ def home():
     return render_template("home.html")
 
 @app.route("/result", methods=["POST", "GET"])
-@app.route("/result_codeAnalysis", methods=["POST", "GET"])
 def analyse():
     if request.form['action'] == 'Submit_Url':
         url = "<API Endpoint Not Defined>"
@@ -64,25 +63,19 @@ def analyse():
         return render_template("result.html",url=url,sslChecker_results=sslChecker_results,
         docTypeChecker_contentType = docTypeChecker_contentType, docTypeChecker_result=docTypeChecker_result,
         xssChecker_xssProtection=xssChecker_xssProtection, xssChecker_result=xssChecker_result) #rendering our account.html contained within /templates
+    
 
-
-    elif request.form['action'] == 'Submit_File':
+@app.route("/result_codeAnalysis", methods=["POST", "GET"])
+def code_analyse():
+    if request.form['action'] == 'Submit_File':
         if (request.method == "POST"):
 
-            if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
-
-            file = request.files['file']
-            if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
-
-            if file:
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                # return redirect(url_for('uploaded_file', filename=filename))
-                return render_template("result_codeAnalysis.html")
+            code = request.form["code"]
+            if not code:
+                return "Error: Code input cannot be empty."
+            else:
+                return render_template("result_codeAnalysis.html", code=code)
+        
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -114,30 +107,6 @@ def register_list():
     checkingData = list(collection.find())
 
     return render_template("register-list.html", data=data, checkingData=checkingData)
-
-# @app.route("/result_codeAnalysis", methods=["POST", "GET"])
-# def code_analyse():
-#     if request.form['action'] == 'Submit_File':
-#         if (request.method == "POST"):
-
-#             if 'file' not in request.files:
-#                 flash('No file part')
-#                 return redirect(request.url)
-
-#             file = request.files['file']
-#             if file.filename == '':
-#                 flash('No selected file')
-#                 return redirect(request.url)
-
-#             if file:
-#                 filename = secure_filename(file.filename)
-#                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#                 # return redirect(url_for('uploaded_file', filename=filename))
-#                 return render_template("result_codeAnalysis.html")
-
-
-            # return render_template("result_codeAnalysis.html")
-
 
 
 if __name__ == "__main__":

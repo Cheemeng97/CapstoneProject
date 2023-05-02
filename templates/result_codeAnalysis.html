@@ -18,43 +18,7 @@
 <div id="SSL" class="w3-container city w3-animate-opacity">
   <div style="text-align: left;">
 
-    <header class="w3-container w3-light-blue">
-      <h4>Common Name</h4>
-    </header>
-    <div class="w3-container">
-      <p>{{ sslChecker_results.CommonName }}</p>
-    </div>
-  
-    <header class="w3-container w3-light-blue">
-      <h4>List of Subject Alternative Names (SAN)</h4>
-    </header>
-    <div class="w3-container">
-      <p>{{ sslChecker_results.SAN }}</p>
-    </div>
-  
-    <header class="w3-container w3-light-blue">
-      <h4>Issuer</h4>
-    </header>
-    <div class="w3-container">
-      <p>{{ sslChecker_results.Issuer }}</p>
-      <p>{{sslChecker_results.result_Issuer}}</p>
-    </div>
-  
-    <header class="w3-container w3-light-blue">
-      <h4>Valid From</h4> 
-    </header>
-    <div class="w3-container">
-      <p>{{ sslChecker_results.ValidFrom }} </p>
-      <p>{{sslChecker_results.result_ValidFrom}} </p>
-    </div>
-
-    <header class="w3-container w3-light-blue">
-      <h4>Valid To </h4>
-    </header>
-    <div class="w3-container">
-      <p>Certificate will expires on {{ sslChecker_results.ValidTo }} ({{sslChecker_results.result_DaysLeft}} days left from today)</p>
-      <p>{{sslChecker_results.result_ValidTo}}</p>
-    </div>
+    {{code}}
 
   </div>
 </div>
