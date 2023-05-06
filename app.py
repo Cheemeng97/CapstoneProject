@@ -74,6 +74,11 @@ def code_analyse():
             if not code:
                 return "Error: Code input cannot be empty."
             else:
+
+                
+
+
+
                 return render_template("result_codeAnalysis.html", code=code)
         
 
