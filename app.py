@@ -9,6 +9,8 @@ from Logic.BestPractice.docType_checker import docTypeChecker
 from Logic.BestPractice.xss_checker import xssChecker
 from pymongo import MongoClient
 import subprocess
+from Logic.sshPost_MacAddress import sshPost_MacAddress
+from Logic.sshPost_BlockWebsite import sshPost_BlockWebsite
 
 UPLOAD_FOLDER = './uploads'
 
@@ -23,6 +25,7 @@ def start_networkScannerJob():
 
 def start_checkRegistrationRecordsJob():
     subprocess.Popen(['python', 'checkingRecords.py'])
+
 #################################################################################################################################
 
 
@@ -82,7 +85,7 @@ def code_analyse():
                 return render_template("result_codeAnalysis.html", code=code)
         
 
-
+################################# Registration #########################################
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     return render_template("register.html")
@@ -97,6 +100,7 @@ def save_registration_data():
     currentDateTime = currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
     data = request.get_json()
     data['registeredOn'] = currentDateTime
+    sshPost_MacAddress(data['moduleCode'],data['macAddress'])
     collection.insert_one(data)
     return jsonify({'message': 'Data saved to MongoDB'})
 
@@ -107,16 +111,41 @@ def register_list():
     db = client['CapstoneProject']
     collection = db['Registration']
     data = list(collection.find())
-
     collection = db['CheckRegistrationRecords']
     checkingData = list(collection.find())
 
     return render_template("register-list.html", data=data, checkingData=checkingData)
 
 
+
+################################# Admin #########################################
+
+@app.route("/admin", methods=['GET', 'POST'])
+def admin():
+    client = MongoClient('localhost', 27017)
+    db = client['CapstoneProject']
+    collection = db['BlockWebsite']
+    data = list(collection.find())
+
+    return render_template("admin.html", data=data)
+
+@app.route('/save-website-data', methods=['POST'])
+def save_website_data():
+    client = MongoClient('localhost', 27017)
+    db = client['CapstoneProject']
+    collection = db['BlockWebsite']
+    currentDateTime = datetime.datetime.now()
+    currentDateTime = currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
+    data = request.get_json()
+    data['lastUpdate'] = currentDateTime
+    data['status'] = sshPost_BlockWebsite(data['website'])
+    collection.insert_one(data)
+    return jsonify({'message': 'Data saved to MongoDB'})
+
 if __name__ == "__main__":
     start_networkScannerJob()
     start_checkRegistrationRecordsJob()
+    # start_updatePendingBlockWebsiteJob()
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.run(debug=False,port=4949)

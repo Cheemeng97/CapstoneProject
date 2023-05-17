@@ -1,0 +1,89 @@
+{% extends "template.html" %} {% block body %}
+
+<style>
+    form {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+</style>
+
+<div class="w3-container w3-center">      
+    <h2>Block Website form</h2>
+    <p>Blocking Website to deny student to access during the test</p>
+
+</div>
+<div class="w3-container w3-center">  
+    <div class="w3-container w3-center">
+        <h2 class="w3-center" style="justify-content: center; display: flex;">Website Form</h2>
+
+        <form class="w3-container w3-card-4" action="/register-list" method="POST" id="websiteForm">
+            <h2>Input Form</h2>
+            <div class="w3-section">      
+                <input class="w3-input" id="website" name="website" type="text" required title="Please enter website to block" required>
+                <label>website</label>
+            </div>
+           
+            <div class="w3-section"> 
+                <!-- <input class="w3-btn w3-theme" type="submit" name="action" value="Register"> -->
+                <button class="w3-btn w3-theme" type="submit">Submit</button>
+            </div>
+        </form>
+    </div> 
+</div>
+
+<h2>Blocked Website List</h2>
+<p></p>
+
+<div class="w3-container w3-center">
+    <div class="w3-container">
+        <table class="w3-table" id="checkingTable">
+            <thead>
+                <tr class="w3-blue">
+                    <th>Blocked Website</th>
+                    <th>Status</th>
+                    <th>Last Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in data %}
+                <tr>
+                    <td>{{ record.website }}</td>
+                    <td>{{ record.status }}</td>
+                    <td>{{ record.lastUpdate }}</td>
+                </tr>
+                {% endfor %}
+                {% if not data %}
+                <tr>
+                    <td colspan="3">No data found.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+
+<script>
+const form = document.getElementById("websiteForm");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault(); // prevent default form submission
+
+  const formData = new FormData(form); // collect form data
+  const data = Object.fromEntries(formData.entries());
+
+  const response = await fetch("/save-website-data", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data), // send data as JSON
+  });
+
+  if (response.ok) {
+    window.location.href = "/admin";
+  }
+});
+</script>
+{% endblock %}
