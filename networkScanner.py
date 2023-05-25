@@ -29,28 +29,18 @@ def getWifiIP():
 def job():
     startTime = datetime.now()
     print("Performing Network Scanning " + str(startTime) + " ......")
-    # print("Getting WiFi IP.....")
+
     wifiIP = getWifiIP()
     if wifiIP:
-        # print("WiFi IP address: " + wifiIP)
-        # print("Start Scanning.....")
-
-        #df = pd.DataFrame(columns=['Master Device', 'Name', 'IP', 'MAC'])
         packet = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=f"{wifiIP}/24") # Create ARP request packet
 
-        # print("Scanning device.....")
-
         results = srp(packet, timeout=3, verbose=0)[0]
-
-        # print("Generating results.....")
 
         devices = []
         for result in results: # 0 = sent packet, 1 = received packet
             devices.append({'ip': result[1].psrc, 'mac': result[1].hwsrc})
 
         currentDateTime = datetime.now()
-
-        # print("Devices connected to WiFi at "+ currentDateTime.strftime("%d/%m/%Y %H:%M:%S") + ":")
 
         for device in devices:
             try:
@@ -77,14 +67,6 @@ def job():
                 'Master Device': masterDeviceCheck, 
                 'Date': currentDateTime.strftime("%d/%m/%Y %H:%M:%S")
                 })
-
-            #Analyse the Total number of devices connected to WiFi
-            # totalDevices = len(df.index)
-            # print("Total Devices Connected to WiFi: " + str(totalDevices))
-            # knownDevices = len(df[df['Name'] != 'Unknown'].index)
-            # print("Known Devices Connected to WiFi: " + str(knownDevices))
-            # unknownDevices = len(df[df['Name'] == 'Unknown'].index)
-            # print("Unknown Devices Connected to WiFi: " + str(unknownDevices))
 
     else:
         print("Could not find WiFi IP address")

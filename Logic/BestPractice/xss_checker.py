@@ -1,7 +1,6 @@
 import requests
 
 def xssChecker(url):
-    # r = requests.get('https://www.healthcare.gov/api/articles.json')
     try:
         r = requests.get(url)
     except requests.exceptions.RequestException as e:
@@ -23,3 +22,4 @@ def xssChecker(url):
             xss_result = "X-XSS-Protection is enabled with mode block. Good Practice!"
 
     return xss_protection, xss_result
+
