@@ -5,7 +5,7 @@ def sshPost_MacAddress(moduleCode, macAddress):
         'uci add firewall rule',
         'uci set firewall.@rule[-1].src="lan"',
         'uci set firewall.@rule[-1].dest="wan"',
-        'uci set firewall.@rule[-1].target="REJECT"',
+        'uci set firewall.@rule[-1].target="ACCEPT"',
         'uci set firewall.@rule[-1].name="Filter-Parental-Controls"',
     ]
 
