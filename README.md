@@ -19,3 +19,10 @@ https://expired-rsa-dv.ssl.com   #expired SSL
 ```
 
 There are currently two available tabs once user submit successfully. There are the TSL/SSL Certificate and API Endpoint Analysis.
+
+
+#Credentials
+## Access to luci throught browser
+Ip address:192.168.3.1
+username:root
+pwd:Qsfhk!xdr1
